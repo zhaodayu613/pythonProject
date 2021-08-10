@@ -1,0 +1,83 @@
+聚焦爬虫：爬取页面中指定的页面内容
+ -编码流程
+    -指定URL
+    -发起请求
+    -获取响应数据
+    -数据解析
+    -持久化存储
+
+数据解析分类：
+       -正则(这个表达式我没看懂呜呜呜 有点小楠
+       -bs4
+       -Xpath(重点！！！)
+
+数据解析原理概述
+    -解析的局部文本内容都会在标签之间或者标签对于的属性中进行存储
+    -1、进行指定标签的定位
+    -2、标签或者标签对应的属性中存储的数据值进行提取（解析）
+
+BS4解析原理：
+数据解析的原理：
+   -1、实例化一个Beautifulsoup对象，并且将页面源码数据加载到该对象中
+   -2、通过调用Beatuifulsoup对象中相关的属性或者方法进行标签定位和数据提取
+   如何实例化调用Beautifulsoup对象？
+   1、导入2个包（from bs4 import Beautifulsoup   import lxml）
+  对象实例化有2种
+  No，1： 导入本地的html对象
+   fp= open('./本地HTML文件'，’r(这里因为是要读取所以用r)‘,encoding='utf-8')
+   soup = Beautifulsoup(fp,'lxml')第一个参数放本地文件对象，第二个参数永远是’lxml‘
+  NO.2: 将互联网上获取的页面源码加载到该对象中
+        page_text = response.text
+        soup = Beautifulsoup(page_text,'lxml')
+  ！！！！对象的属性和方法
+   1、soup.tagname====>例如（<a） soup.a  :返回html中第一次出现的标签内容！
+   2、soup.find('标签名') 1、 =soup.标签名 他们作用一样
+                         2、根据标签中属性定位到具体的含某个属性的标签 soup.find('标签名'，属性条件)
+                         3、soup.find_all()  返回符合要求的所有标签！（返回一个列表）
+   3、soup.select   1.select('某种选择器')（ex. 属性为：class=tang）==> soup.select('.tang')  返回的是一个列表
+                    2. 层级选择器  soup.select('.tang>ul>li>a')[0]  >表示一个层级  【0】表示其中第一个a标签
+                            soup.select('.tang>ul a') ul和a之间有个空格 空格表示多个层级
+   4、获取标签之间的文本数据：
+   soup.a.text/string/get_text(){最后一个是方法}
+      text和get_text可以获取一个标签内所有的标签内容
+      string 只可以获取直系的文本内容 不能跨级获取
+    5、获取标签中间的属性值（假设a标签下 htf='www.jfjf.com'）
+     soup.a['href']  方括号直接加属性名称
+
+xpath 解析：最常用最高效的一种解析方式。很通用
+
+-xpath解析原理
+   1、实例化一个etree的对象，且需要将被解析的页面源码数据加载到该对象中。
+   2、调用etree的对象中的xpath方法结合着xpath表达式实现标签的定位和内容的捕获
+  -环境的安装
+    需要用到lxml
+  -如何实例化一个etree对象： from lxml import etree
+   1、将本地的html文档中的源码数据加载到etree对象中：
+         etree.parse(filePath)
+   2、可以从互联网上获取源码数据加载到该对象中
+         etree.HTMl('page_text')
+       xpath('path表达式')
+       -：/表示从根节点开始定位，表示的是一个层级（/html/body/div）
+       -://表示的是多个层级，可以表示从任意位置开始定位  ex1:（/html//div）  ex2: （//div）
+       -:属性定位：xpath(//div[@class="宋"])  定位到属性为宋的div ====>tag[@attrname="attrValue"]
+       -:索引定位：//div[@class="宋"/p[3]  拿到这组标签下第三个P标签 注意索引从1开始
+      取标签里的文本
+      -  /text()  返回的是列表  取得的直系文本
+      -  //text()  标签中非直系文本即所有的文本内容
+      取标签里的属性值：
+      /@属性名称
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
